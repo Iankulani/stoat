@@ -1,0 +1,144 @@
+# STOAT-HACKER v4.0.0 - GitLab CI/CD Pipeline
+# Runs tests, security checks, and builds Docker image
+
+stages:
+  - setup
+  - test
+  - security
+  - build
+  - deploy
+
+variables:
+  DOCKER_IMAGE: $CI_REGISTRY_IMAGE
+  DOCKER_TAG: $CI_COMMIT_SHORT_SHA
+  PYTHON_VERSION: "3.11"
+
+# ==================== SETUP STAGE ====================
+
+setup:
+  stage: setup
+  image: ubuntu:22.04
+  before_script:
+    - apt-get update -qq && apt-get install -y -qq python3 python3-pip python3-venv nmap nikto curl netcat-openbsd whois dnsutils traceroute iptables wkhtmltopdf sqlite3
+    - python3 -m venv venv
+    - source venv/bin/activate
+  script:
+    - pip install --upgrade pip -q
+    - pip install -r requirements.txt -q
+    - python3 requirements_check.py
+    - python3 -c "import stoat; print('✅ STOAT imported successfully')"
+  artifacts:
+    paths:
+      - venv/
+    expire_in: 1 day
+
+# ==================== TEST STAGE ====================
+
+test:
+  stage: test
+  image: ubuntu:22.04
+  needs: ["setup"]
+  before_script:
+    - apt-get update -qq && apt-get install -y -qq python3 python3-pip python3-venv nmap nikto curl netcat-openbsd whois dnsutils traceroute iptables wkhtmltopdf sqlite3
+    - python3 -m venv venv
+    - source venv/bin/activate
+    - pip install -r requirements.txt -q
+  script:
+    - python3 test_commands.py
+  artifacts:
+    paths:
+      - stoat_reports/
+      - logs/
+    expire_in: 7 days
+
+# ==================== SECURITY STAGE ====================
+
+security:
+  stage: security
+  image: python:3.11-slim
+  needs: ["setup"]
+  before_script:
+    - pip install bandit safety
+  script:
+    - bandit -r . -ll -f json -o bandit-report.json || true
+    - safety check -r requirements.txt || true
+  artifacts:
+    paths:
+      - bandit-report.json
+    expire_in: 30 days
+  allow_failure: true
+
+# ==================== BUILD STAGE ====================
+
+build:
+  stage: build
+  image: docker:24.0.0
+  services:
+    - docker:24.0.0-dind
+  needs: ["setup", "test"]
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - docker build -t $DOCKER_IMAGE:$DOCKER_TAG .
+    - docker tag $DOCKER_IMAGE:$DOCKER_TAG $DOCKER_IMAGE:latest
+    - docker push $DOCKER_IMAGE:$DOCKER_TAG
+    - docker push $DOCKER_IMAGE:latest
+  only:
+    - main
+    - master
+
+build-ubuntu:
+  stage: build
+  image: docker:24.0.0
+  services:
+    - docker:24.0.0-dind
+  needs: ["setup", "test"]
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - docker build -f Dockerfile.ubuntu -t $DOCKER_IMAGE:ubuntu-$DOCKER_TAG .
+    - docker tag $DOCKER_IMAGE:ubuntu-$DOCKER_TAG $DOCKER_IMAGE:ubuntu-latest
+    - docker push $DOCKER_IMAGE:ubuntu-$DOCKER_TAG
+    - docker push $DOCKER_IMAGE:ubuntu-latest
+  only:
+    - main
+    - master
+
+# ==================== DEPLOY STAGE ====================
+
+deploy:
+  stage: deploy
+  image: alpine:latest
+  needs: ["build"]
+  before_script:
+    - apk add --no-cache openssh-client
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+  script:
+    - ssh -o StrictHostKeyChecking=no $DEPLOY_USER@$DEPLOY_HOST "
+        cd /opt/stoat &&
+        docker pull $DOCKER_IMAGE:$DOCKER_TAG &&
+        docker stop stoat || true &&
+        docker rm stoat || true &&
+        docker run -d --name stoat --restart always --net=host -v /opt/stoat/.stoat:/app/.stoat $DOCKER_IMAGE:$DOCKER_TAG
+      "
+  only:
+    - main
+    - master
+  when: manual
+
+# ==================== CODE QUALITY ====================
+
+code_quality:
+  stage: security
+  image: python:3.11-slim
+  needs: ["setup"]
+  before_script:
+    - pip install pylint pylint-exit black
+  script:
+    - black --check . || true
+    - pylint --exit-zero stoat.py
+    - pylint --exit-zero test_commands.py
+  allow_failure: true

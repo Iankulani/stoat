@@ -1,0 +1,91 @@
+version: '3.8'
+
+services:
+  stoat:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: stoat-hacker
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - ./stoat_reports:/app/stoat_reports      - ./logs:/app/logs
+      - ./.stoat:/app/.stoat
+      - ./payloads:/app/payloads
+      - ./temp:/app/temp
+    environment:
+      - PYTHONUNBUFFERED=1
+      - STOAT_ENV=production
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+      - SYS_ADMIN
+    security_opt:
+      - apparmor:unconfined
+    stdin_open: true
+    tty: true
+    command: ["--help"]
+
+  stoat-web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: stoat-web
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./stoat_reports:/app/stoat_reports
+      - ./logs:/app/logs
+      - ./.stoat:/app/.stoat
+    environment:
+      - PYTHONUNBUFFERED=1
+      - STOAT_MODE=web
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    command: ["--web-only"]
+
+  stoat-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: stoat-agent
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - ./logs:/app/logs
+      - ./.stoat:/app/.stoat
+    environment:
+      - PYTHONUNBUFFERED=1
+      - STOAT_MODE=agent
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    command: ["--agent"]
+
+  postgres:
+    image: postgres:15
+    container_name: stoat-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: stoat
+      POSTGRES_USER: stoat
+      POSTGRES_PASSWORD: stoat2024
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:7-alpine
+    container_name: stoat-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+
+volumes:
+  pgdata:
+  redisdata:

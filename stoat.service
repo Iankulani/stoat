@@ -1,0 +1,21 @@
+[Unit]
+Description=STOAT-HACKER v4.0.0 - Cybersecurity Platform
+Documentation=https://github.com/stoat-hacker/stoat
+After=network.target
+
+[Service]
+Type=simple
+User=root
+Group=root
+WorkingDirectory=/opt/stoat
+Environment="PATH=/opt/stoat/stoat_env/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+ExecStart=/opt/stoat/stoat_env/bin/python3 /opt/stoat/stoat.py
+ExecStop=/bin/kill -SIGINT $MAINPID
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=stoat
+
+[Install]
+WantedBy=multi-user.target

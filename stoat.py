@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 🦡 STOAT-HACKER v4.0.0 - Ultimate Cybersecurity Command & Control Platform
-Author: Advanced Security Framework
+Author:Ian Carter Kulani, MSc
 Version: 4.0.0
 
 A complete cybersecurity automation platform featuring:

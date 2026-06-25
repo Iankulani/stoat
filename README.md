@@ -1,6 +1,20 @@
 
 <img width="1536" height="1024" alt="stoat" src="https://github.com/user-attachments/assets/00fb864a-f9ca-4572-9d19-3424088a48ef" />
 
+[![GitHub stars](https://img.shields.io/github/stars/Iankulani/stoat?style=for-the-badge&logo=github)](https://github.com/Iankulani/stoat/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/Iankulani/stoat?style=for-the-badge&logo=github)](https://github.com/Iankulani/stoat/network)
+[![GitHub watchers](https://img.shields.io/github/watchers/Iankulani/stoat?style=for-the-badge&logo=github)](https://github.com/Iankulani/stoat/watchers)
+[![GitHub contributors](https://img.shields.io/github/contributors/Iankulani/stoat?style=for-the-badge&logo=github)](https://github.com/Iankulani/stoat/graphs/contributors)
+[![GitHub last commit](https://img.shields.io/github/last-commit/Iankulani/stoat?style=for-the-badge&logo=git)](https://github.com/Iankulani/stoat/commits/main)
+[![License](https://img.shields.io/badge/license-MIT-green?style=for-the-badge)](LICENSE)
+[![Platform](https://img.shields.io/badge/platform-Linux%20%7C%20Windows%20%7C%20macOS-blue?style=for-the-badge&logo=linux&logoColor=white)](https://github.com/Iankulani/stoat)
+[![Python](https://img.shields.io/badge/python-3.x-blue?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
+[![Docker](https://img.shields.io/badge/docker-supported-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://docker.com)
+[![Discord](https://img.shields.io/badge/Discord-Community-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.com)
+[![Telegram](https://img.shields.io/badge/Telegram-Bot-26A5E4?style=for-the-badge&logo=telegram&logoColor=white)](https://telegram.org)
+[![Cybersecurity](https://img.shields.io/badge/Cybersecurity-Training-red?style=for-the-badge&logo=hackaday&logoColor=white)](https://github.com/Iankulani/stoat)
+[![Open Source](https://img.shields.io/badge/Open%20Source-Yes-success?style=for-the-badge&logo=opensourceinitiative&logoColor=white)](https://github.com/Iankulani/stoat)
+
 STOAT is an advanced cyber security platform designed to provide remote cyber operations, cyber security training, cyber drills, security awareness exercises, and cyber defense capabilities through multiple communication channels. The platform enables authorized users to execute commands and manage cyber security activities through Discord, Telegram, Slack, iMessage, Google Chat, Signal, and a dedicated web application.
 
 Named after the stoat, a fast, intelligent, and adaptable animal, STOAT is built to provide flexibility, speed, and efficiency in modern cyber security environments. The platform combines communication, automation, security operations, training, and collaboration into a single unified solution.

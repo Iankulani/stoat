@@ -166,4 +166,7 @@ python3 stoat.py
 ```
 
 
-# Star History
+
+# ⭐ Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=Iankulani/stoat&type=Date)](https://star-history.com/#Iankulani/stoat&Date)

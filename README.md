@@ -1,8 +1,6 @@
 
 <img width="1536" height="1024" alt="stoat" src="https://github.com/user-attachments/assets/00fb864a-f9ca-4572-9d19-3424088a48ef" />
 
-STOAT Cyber Security Platform
-
 STOAT is an advanced cyber security platform designed to provide remote cyber operations, cyber security training, cyber drills, security awareness exercises, and cyber defense capabilities through multiple communication channels. The platform enables authorized users to execute commands and manage cyber security activities through Discord, Telegram, Slack, iMessage, Google Chat, Signal, and a dedicated web application.
 
 Named after the stoat, a fast, intelligent, and adaptable animal, STOAT is built to provide flexibility, speed, and efficiency in modern cyber security environments. The platform combines communication, automation, security operations, training, and collaboration into a single unified solution.
